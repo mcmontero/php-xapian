@@ -14,7 +14,7 @@ XAPIAN
 GOALS
 =====
 
-    - To provide a simple, standardized interface for indexing data into
+    - To provide a simple, standardized PHP interface for indexing data into
       Xapian and searching against it.
 
 USAGE

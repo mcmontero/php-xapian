@@ -1,6 +1,16 @@
 php-xapian
 Copyright 2013 Michael C. Montero (mcmontero@gmail.com)
 
+XAPIAN
+======
+
+    Xapian is a highly adaptable toolkit which allows developers to easily add
+    advanced indexing and search facilities to their own applications. It
+    supports the Probabilistic Information Retrieval model and also supports a
+    rich set of boolean query operators.
+
+        http://xapian.org/
+
 GOALS
 =====
 

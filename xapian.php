@@ -173,7 +173,7 @@ class xapian_Prefix_Dictionary
 
     final public function add_slot_prefix($slot_num, $prefix, $type)
     {
-        $this->validate_slot_prefix_type($type);
+        $this->validate_range_processor_type($type);
 
         $this->slot_prefixes[ $slot_num ] = array($prefix, $type);
         return $this;
@@ -222,7 +222,7 @@ class xapian_Prefix_Dictionary
     // | Private Methods |
     // +-----------------+
 
-    private function validate_slot_prefix_type($type)
+    private function validate_range_processor_type($type)
     {
         if (!in_array($type, array(self::SLOT_NUM_VAL_RANGE_PROC)))
         {

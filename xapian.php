@@ -72,11 +72,13 @@ class xapian_Base
     protected $db_path;
     protected $db;
     protected $stem_lang;
+    protected $stopper;
 
     function __construct($db_path)
     {
         $this->db_path   = $db_path;
         $this->stem_lang = 'english';
+        $this->stopper   = new XapianSimpleStopper();
     }
 
     function __destruct()
@@ -94,6 +96,12 @@ class xapian_Base
     final public function set_stem_lang($lang)
     {
         $this->stem_lang = $lang;
+        return $this;
+    }
+
+    final public function set_stopper(XapianStopper $stopper)
+    {
+        $this->stopper = $stopper;
         return $this;
     }
 
@@ -430,6 +438,8 @@ extends xapian_Base
             ->set_stemmer(new XapianStem($this->stem_lang));
         $this->query_parser
             ->set_stemming_strategy(XapianQueryParser::STEM_SOME);
+        $this->query_parser
+            ->set_stopper($this->stopper);
         $this->prefix_dict
             ->configure_prefixes($this->query_parser);
 

@@ -346,7 +346,7 @@ extends xapian_Base
 
     final public function set_data($data)
     {
-        $this->data = json_encode($data);
+        $this->data = $data;
         return $this;
     }
 

@@ -77,8 +77,9 @@ USAGE
                     ->add_boolean_term('XSHAPEsquare')
                     ->add_text('The quick brown fox jumped over the lazy dog.')
                     ->add_to_slot(0, 1234)
-                    ->set_data(array('name' => 'Michael Montero',
-                                     'dob'  => 'January 15, 1974'))
+                    ->set_data(json_encode(
+                                array('name' => 'Michael Montero',
+                                      'dob'  => 'January 15, 1974')))
                     ->execute();
 
     xapian_Query

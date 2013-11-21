@@ -452,6 +452,11 @@ extends xapian_Base
         return $this;
     }
 
+    final public function get_match_set()
+    {
+        return $this->match_set;
+    }
+
     final public function get_next()
     {
         if (empty($this->match_set))

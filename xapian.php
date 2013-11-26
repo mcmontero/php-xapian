@@ -300,7 +300,7 @@ extends xapian_Base
         if (empty($this->id))
         {
             throw new xapian_Exception('A record cannot be indexed without an '
-                                       . 'ID.');
+                                       . 'integer ID.');
         }
 
         if (empty($this->text) &&
@@ -316,7 +316,6 @@ extends xapian_Base
 
         $document = new XapianDocument();
         $indexer  = new XapianTermGenerator();
-        $id       = 'Q' . $this->id;
 
         $indexer->set_document($document);
         $indexer->set_stemmer(new XapianStem($this->stem_lang));
@@ -341,7 +340,6 @@ extends xapian_Base
             $document->set_data($this->data);
         }
 
-        $document->add_boolean_term($id);
         $this->db->replace_document($id, $document);
 
         $indexer  = null;
@@ -360,7 +358,13 @@ extends xapian_Base
 
     final public function set_id($id)
     {
-        $this->id = $id;
+        if (!is_int($id))
+        {
+            throw new xapian_Exception('This library does not support non-'
+                                       . 'integer ID values');
+        }
+
+        $this->id = intval($id);
         return $this;
     }
 

@@ -340,7 +340,7 @@ extends xapian_Base
             $document->set_data($this->data);
         }
 
-        $this->db->replace_document($id, $document);
+        $this->db->replace_document($this->id, $document);
 
         $indexer  = null;
         $document = null;

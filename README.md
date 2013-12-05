@@ -11,6 +11,9 @@ XAPIAN
 
         http://xapian.org/
 
+    - Special thanks to Matt Story for helping put all of these concepts
+      together and introducing me to Xapian.
+
 GOALS
 =====
 

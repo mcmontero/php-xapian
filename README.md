@@ -89,7 +89,7 @@ USAGE
     ------------
       * Executes searches against the Xapian index using a text query string.
 
-            $query   = xapian_Query('/opt/xapian/db', $dictionary)
+            $query   = xapian_Query::make('/opt/xapian/db', $dictionary);
             $matches = $query->execute('color:blue '
                                        . 'AND shape:square '
                                        . 'AND num:1..1235');

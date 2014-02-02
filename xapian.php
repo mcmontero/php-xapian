@@ -69,16 +69,21 @@ extends Exception
  */
 class xapian_Base
 {
+    const DB_ACCESS_READ_ONLY  = 1;
+    const DB_ACCESS_READ_WRITE = 2;
+
     protected $db_path;
     protected $db;
     protected $stem_lang;
     protected $stopper;
+    protected $db_access_id;
 
     function __construct($db_path)
     {
-        $this->db_path   = $db_path;
-        $this->stem_lang = 'english';
-        $this->stopper   = new XapianSimpleStopper();
+        $this->db_path      = $db_path;
+        $this->stem_lang    = 'english';
+        $this->stopper      = new XapianSimpleStopper();
+        $this->db_access_id = self::DB_ACCESS_READ_ONLY;
     }
 
     function __destruct()
@@ -92,6 +97,12 @@ class xapian_Base
     // +----------------+
     // | Public Methods |
     // +----------------+
+
+    final public function set_read_write()
+    {
+        $this->db_access_id = self::DB_ACCESS_READ_WRITE;
+        return $this;
+    }
 
     final public function set_stem_lang($lang)
     {
@@ -113,10 +124,27 @@ class xapian_Base
     {
         if (is_null($this->db))
         {
-            $this->db =
-                new XapianWritableDatabase(
-                        $this->db_path,
-                        Xapian::DB_CREATE_OR_OPEN);
+            switch ($this->db_access_id)
+            {
+                case self::DB_ACCESS_READ_ONLY:
+                    $this->db =
+                        new XapianDatabase(
+                                $this->db_path);
+                    break;
+
+                case self::DB_ACCESS_READ_WRITE:
+                    $this->db =
+                        new XapianWritableDatabase(
+                                $this->db_path,
+                                Xapian::DB_CREATE_OR_OPEN);
+                    break;
+
+                default:
+                    throw new xapian_Exception(
+                                'Unrecognized DB access ID "'
+                                . $this->db_access_id
+                                . '"');
+            }
         }
     }
 }
@@ -400,6 +428,7 @@ extends xapian_Base
     private $enquire;
     private $match_set;
     private $match_index;
+    private $num_matches;
 
     function __construct($db_path, xapian_Prefix_Dictionary $dict = null)
     {
@@ -425,7 +454,10 @@ extends xapian_Base
     // | Public Methods |
     // +----------------+
 
-    final public function execute($query, $num_to_fetch = 100, $offset = 0)
+    final public function execute($query,
+                                  $num_to_fetch = 100,
+                                  $offset = 0,
+                                  $check_at_least = null)
     {
         if (empty($query))
         {
@@ -452,7 +484,11 @@ extends xapian_Base
         $this->enquire = new XapianEnquire($this->db);
         $this->enquire->set_query($this->query);
 
-        $this->match_set = $this->enquire->get_mset($offset, $num_to_fetch);
+        $this->match_set =
+            $this->enquire->get_mset($offset, $num_to_fetch, $check_at_least);
+        $this->num_matches =
+            $this->match_set->get_matches_estimated();
+
         return $this;
     }
 
@@ -468,7 +504,7 @@ extends xapian_Base
             throw new xapain_Exception('No match set has been generated.');
         }
 
-        if ($this->match_set->get_matches_estimated() == 0)
+        if ($this->num_matches == 0)
         {
             return null;
         }
@@ -487,13 +523,18 @@ extends xapian_Base
         }
     }
 
+    final public function get_num_matches()
+    {
+        return $this->num_matches;
+    }
+
     final public function reset()
     {
-        $this->enquire      = null;
-        $this->query        = null;
-        $this->query_parser = null;
-        $this->match_set    = null;
-        $this->match_index  = null;
+        $this->enquire        = null;
+        $this->query          = null;
+        $this->query_parser   = null;
+        $this->match_set      = null;
+        $this->match_index    = null;
     }
 }
 ?>

@@ -537,4 +537,47 @@ extends xapian_Base
         $this->match_index    = null;
     }
 }
+
+//
+// +-----------------+
+// | xapian_Document |
+// +-----------------+
+//
+
+class xapian_Document
+extends xapian_Base
+{
+    function __construct($db_path)
+    {
+        parent::__construct($db_path);
+    }
+
+    static function make($db_path)
+    {
+        return new self($db_path);
+    }
+
+    // +----------------+
+    // | Public Methods |
+    // +----------------+
+
+    final public function get($id)
+    {
+        if (empty($id))
+        {
+            return null;
+        }
+
+        $this->connect_db();
+
+        try
+        {
+            return $this->db->get_document($id);
+        }
+        catch (Exception $e)
+        {
+            return null;
+        }
+    }
+}
 ?>
